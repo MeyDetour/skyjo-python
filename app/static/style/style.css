@@ -1,0 +1,237 @@
+body{
+    background: #e3dbdb;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    height: 100vh;
+    width: 100vw;
+    overflow-x: hidden;
+    padding:  50px;
+    box-sizing: border-box;
+
+}
+#SL_balloon_obj, #SL_shadow_translator {
+    display: none !important;
+}
+#cursor-text {
+    font-size: 14px;
+    background-color: rgba(0, 0, 0, 0.6);
+    color: white;
+    padding: 5px;
+    border-radius: 3px;
+    z-index: 9999;
+}
+.meta-turn,.meta-player-turn{
+    display: none;
+}
+/*==================DISCARD===============*/
+.piocheContainer{
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    align-items: center;
+}
+.pioche{
+    align-self: center;
+    display: flex;
+    flex-direction: row;
+    gap: 10px;
+    position: relative;
+}
+
+.pioche .stagingCard{
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    z-index: 2;
+    transform: translate(-50%, -15%);
+
+}
+/*=============basic==============*/
+.plateau{
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+}
+
+.cardDeck{
+    display: flex;
+    flex-direction: row;
+    gap: 21px;
+    position: relative;
+}
+.turn{
+    position: absolute;
+    top: -37px;
+    left: 50%;
+    color: blueviolet;
+    font-size: 20px;
+    font-weight: 700;
+    transform: translateX(-50%);
+}
+.columnCard{
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+/*===========ABOUT LITTLE CARD==========*/
+.littleCard{
+
+    width: 69px !important;
+    height: 107px !important;
+}
+
+.littleCard .topNumber,.littleCard .bottomNumber{
+    font-size: 14px !important;
+}
+.littleCard .number{
+
+    font-size: 55px !important;
+}
+.littleCard .behindCard span{
+
+    font-size: 18px !important;
+}
+.noLittleCard{
+    width: 118px !important;
+    height: 174px !important;
+}
+
+/*===========ABOUT CARD==========*/
+
+.card{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    width: 118px;
+    height: 174px;
+    border: white 8px solid;
+    box-shadow: grey 0px 0px 12px 0px;
+    border-radius: 20px;
+    background: #ffffff;
+    position: relative;
+
+    cursor: pointer;
+
+    color: black;
+    font-weight: bold;
+    font-style: italic;
+}
+.noCard{
+    background: transparent !important; ;
+    border: 0 !important;
+    box-shadow: none !important;
+    display: none  ;
+}
+.showNoCard {
+    display: flex !important;
+}
+
+.untouchable{
+    cursor: not-allowed !important;
+}
+.behindCard{
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(163deg, #ffda18, #9ce58e82);
+    z-index: 1;
+    border-radius: 15px;
+}
+.behindCard span{
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    z-index: 1;
+    transform: translate(-50%, -50%);
+    color: white;
+    font-size: 31px;
+}
+.behindCard::after{
+    content: "";
+    position: absolute;
+    top: 0%;
+    left: 0%;
+    width: 100%;
+    height: 100%;
+
+    border-radius: 6px;
+
+    background: linear-gradient(45deg, #e3b4b4, #a124ff);
+}
+.yellow{
+    background: #ffff28;
+}
+.darkBlue{
+    background: #001c81;
+}
+.blue{
+    background: #a9d3fd;
+}
+.green{
+    background: #b5ff63;
+}
+.red{
+
+    background: #ff6363;
+}
+.darkBlue::after{
+    background: #ffffff73 !important;
+    box-shadow: 0px 0px 54px 44px hsl(0deg 0% 100% / 48%) !important;
+
+}
+.red::after{
+    background: #ffffffab !important;
+}
+.card::after{
+    content: "";
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 41%;
+    height: 38%;
+    background: #ffffffb5;
+    border-radius: 50%;
+    backdrop-filter: blur(72px);
+    box-shadow: 0px 0px 54px 44px #ffffffb5;
+}
+.card .topNumber{
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+
+    font-size: 26px;
+    position: absolute;
+    top: 5px;
+    left: 5px;
+    background: white;
+    width: 30%;
+    height: 16%;
+    border-radius: 60px 30px;
+    z-index: 1;
+}
+.card .number{
+    font-size: 82px;
+
+    z-index: 1;
+}
+.card .bottomNumber{
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+
+    font-size: 26px;
+    position: absolute;
+    bottom: 5px;
+    right: 5px;
+    background: white;
+    width: 30%;
+    height: 16%;
+    border-radius: 60px 30px;
+
+    z-index: 1;
+}

@@ -1,0 +1,290 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <link rel="stylesheet" href="{{url_for('static',filename='style/style.css')}}">
+</head>
+<body>
+<div class="meta-turn"></div>
+<div class="meta-player-turn"></div>
+<div id="cursor-text" style="position:absolute; pointer-events:none; display:none;">
+</div>
+
+<div class="piocheContainer">
+    <span></span>
+    <span class="error"></span>
+    <a href="/restart">restart</a>
+    <div class="pioche">
+        <div class='card cardForPioche '>
+            <div class='behindCard'><span>SKYJO</span></div>
+        </div>
+
+        <div class="showedCard">
+            {{showed_card|safe}}
+        </div>
+        <div class="card noCard">
+
+        </div>
+    </div>
+
+</div>
+<div class="plateau">
+    {{cards|safe}}
+</div>
+
+<script>
+
+    function setMouseText(player, message) {
+
+
+        document.addEventListener('mousemove', function (e) {
+            // Check the turn attribute
+
+            if (document.querySelector('.meta-turn').getAttribute('data-value') > 0) {
+                const hoveredElement = document.elementFromPoint(e.clientX, e.clientY);
+                const cursorText = document.querySelector('#cursor-text');
+                cursorText.innerHTML = message
+
+                if (hoveredElement && hoveredElement.closest(`#player${player}`)) {
+                    cursorText.style.left = e.pageX + 10 + 'px'; // Position slightly to the right of the cursor
+                    cursorText.style.top = e.pageY + 10 + 'px';  // Position slightly below the cursor
+                    cursorText.style.display = 'block'; // Show the text
+                } else {
+                    cursorText.style.display = 'none'; // Hide the text when not over #player0
+                }
+
+
+            }
+        });
+    }
+
+    function removeMouseText() {
+        const cursorText = document.querySelector('#cursor-text');
+        cursorText.style.display = 'none'; // Hide the text when not over #player0
+
+    }
+
+
+    function add_onclick() {
+        document.querySelectorAll('.card').forEach(card => {
+            card.removeEventListener('click', click_handle);
+            card.addEventListener('click', click_handle);
+        });
+
+    }
+
+    function click_handle(event) {
+        let card = event.currentTarget
+        if (!card.classList.contains("untouchable")) {
+
+            if (card.classList.contains('cardForPioche')) {
+                discard_card()
+            } else if (card.classList.contains('stagingCard')) {
+                replaceStagingCardInShowedCard()
+
+            } else if (card.classList.contains('discardedCard')) {
+                getDiscardedCard()
+
+            } else {
+                const player_id = card.parentElement.parentElement.getAttribute("data-id")
+                console.log(player_id)
+                if (document.querySelector('.stagingCard')) {
+                    exchange(this.id, player_id)
+                } else {
+                    show.call(this);
+                    return_card(this.id, player_id)
+
+                }
+            }
+        }
+
+    }
+
+    updateBoard()
+
+    async function updateBoard() {
+
+        const response = await fetch('/update_board', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            }
+        });
+
+        const data = await response.json();
+        document.querySelector('.plateau').innerHTML = data.cards;
+        document.querySelector('.piocheContainer > span').innerText = "Discard : " + data.discard_cards_left + " cards left";
+        document.querySelector('.showedCard').innerHTML = data.showed_card;
+        const existingStagingCard = document.querySelector('.stagingCard')
+        if (data.staging_card) {
+            if (existingStagingCard) {
+                existingStagingCard.outerHTML = data.staging_card
+            } else {
+
+                document.querySelector('.pioche').innerHTML += data.staging_card;
+            }
+        } else {
+            if (existingStagingCard) {
+                existingStagingCard.remove()
+            }
+        }
+        document.querySelector('.meta-turn').setAttribute('data-value', data.turn_number);
+        document.querySelector('.meta-player-turn').setAttribute('data-value', data.current_turn);
+        console.log(data.turn_number)
+        if (data.turn_number <= 0 || document.querySelector('.stagingCard')) {
+            document.querySelector(".pioche .cardForPioche").classList.add("untouchable")
+        } else {
+            document.querySelector(".pioche .cardForPioche").classList.remove("untouchable")
+        }
+        const display_no_card = data.no_card
+
+        if (display_no_card) {
+            document.querySelector('.noCard').classList.add('showNoCard')
+        } else {
+            document.querySelector('.noCard').classList.remove('showNoCard')
+        }
+        if (!document.querySelector('.stagingCard') && data.turn_number > 0) {
+            setMouseText(data.current_turn, "Discard card before return someone")
+        } else if (existingStagingCard) {
+            setMouseText(data.current_turn, "Choose card to change with staging card")
+          /*  setMouseText(-1, "Click here to pass this card and return your own card")
+*/
+        } else {
+            removeMouseText()
+        }
+        /* avoid adding many  click on same card */
+        add_onclick()
+    }
+
+    /*document.getElementById('play-turn-button').addEventListener('click', updateBoard);*/
+
+    function return_card(card_number, player) {
+        let body = {
+            card_number: card_number,
+            player_number: player
+        }
+        fetch('/return/card', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(body),
+        })
+            .then(response => response.json())
+            .then(data => {
+                if (data.error) {
+                    alert(data.error)
+                } else {
+                    console.log('Success:', data);
+                    updateBoard()
+                }
+
+            })
+            .catch((error) => {
+                console.error('Error:', error);
+                alert(error.message);
+            });
+    }
+
+    function replaceStagingCardInShowedCard(card_number, player) {
+
+        fetch('/pass/staging/card', {
+            method: 'GET',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+        })
+            .then(response => response.json())
+            .then(data => {
+                if (data.error) {
+                    alert(data.error)
+                } else {
+                    console.log('Success:', data);
+                    updateBoard()
+                }
+
+            })
+            .catch((error) => {
+                console.error('Error:', error);
+                alert(error.message);
+            });
+    }
+
+    function getDiscardedCard() {
+
+        fetch('/get/showed/card', {
+            method: 'GET',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+
+        })
+            .then(response => response.json())
+            .then(data => {
+                if (data.message == 'ok') {
+                    updateBoard()
+                }
+
+            })
+            .catch((error) => {
+                console.error('Error:', error);
+                alert(error.message);
+            });
+    }
+
+    function discard_card() {
+
+        fetch('/discard', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            }
+        })
+            .then(response => response.json())
+            .then(data => {
+                if (data.message == 'ok') {
+                    updateBoard()
+                }
+
+            })
+            .catch((error) => {
+                console.error('Error:', error);
+                alert(error.message);
+            });
+    }
+
+    function exchange(card_number, player_index) {
+        console.log(player_index)
+        const body = {
+            "card_to_change": card_number,
+            "player_index": player_index
+        }
+        console.log(body)
+        fetch('/exchange', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(body),
+        })
+            .then(response => response.json())
+            .then(data => {
+                if (data.message == "ok") {
+                    updateBoard()
+                }
+            })
+            .catch((error) => {
+                console.error('Error:', error);
+                alert(error.message);
+            });
+    }
+
+    function show() {
+        this.querySelector(".behindCard").remove()
+        console.log(this)
+    }
+
+</script>
+</body>
+</html>
