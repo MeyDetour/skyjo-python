@@ -1,19 +1,120 @@
-body{
-    background: #e3dbdb;
+@import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@400..900&display=swap');
+
+body {
+    background: #212121;
     display: flex;
     flex-direction: column;
     justify-content: space-between;
     height: 100vh;
     width: 100vw;
     overflow-x: hidden;
-    padding:  50px;
+    padding: 50px;
     box-sizing: border-box;
 
+    font-family: "Cinzel", serif;
+    font-optical-sizing: auto;
+    font-weight: 500;
+    font-style: normal;
+    color: white;
+
 }
+
+/*==============MENU CONTAINER========*/
+.menuContainer {
+    display: flex;
+
+    flex-direction: column;
+    justify-content: center;
+    height: 100%;
+    align-items: center;
+
+
+    gap: 6%;
+    color: white;
+}
+
+.skyjoContainer {
+    display: none;
+
+    height: 100%;
+    flex-direction: column;
+    justify-content: space-between;
+}
+
+.menuContainer .startCard {
+
+    justify-content: space-evenly;
+}
+
+.menuContainer .startCard span {
+
+    color: white;
+    font-size: 24px;
+}
+
+/*==============SCORE CONTAINER========*/
+.scoresContainer {
+    display: none;
+
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    height: 100%;
+    position: relative;
+}
+.scoresContainer h1{
+    display: none
+}
+
+.scoresContainer .scores {
+    background-image: linear-gradient(to bottom, #3E3E3E, #3E3E3E 100%), linear-gradient(222deg, #8D2CF4, #F7C830, #DB386C, #1CE41C 100%) !important;
+    width: fit-content;
+    min-width: 23%;
+    height: 50%;
+    border: double 8px transparent;
+    background-clip: content-box, border-box;
+    background-origin: border-box;
+    border-radius: 27px;
+    display: flex;
+    flex-direction: column;
+    position: relative;
+}
+
+.scoresContainer .title {
+
+    padding: 25px 80px;
+    box-sizing: border-box;
+    width: 100%;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    gap: 80px;
+    padding-bottom: 20px;
+    border-bottom: #D9D9D9 4px solid;
+}
+
+.scoresContainer .scoreLine {
+    gap: 80px;
+    padding: 25px 100px;
+    box-sizing: border-box;
+    width: 100%;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+
+}
+.scoresContainer button{
+    width: fit-content;
+    align-self: center;
+    margin: 43px 19px;
+}
+/*==============SKYJO CONTAINER========*/
 #SL_balloon_obj, #SL_shadow_translator {
     display: none !important;
 }
-#cursor-text {
+
+#cursor-text, #cursor-text-2 {
     font-size: 14px;
     background-color: rgba(0, 0, 0, 0.6);
     color: white;
@@ -21,17 +122,51 @@ body{
     border-radius: 3px;
     z-index: 9999;
 }
-.meta-turn,.meta-player-turn{
+
+.meta-turn, .meta-player-turn {
     display: none;
 }
+
+.skyjoTitle {
+    position: absolute;
+    top: 10px;
+    left: 11px;
+    color: white;
+    font-size: 25px;
+    gap: 20px;
+    display: flex;
+
+
+}
+
+.skyjoTitle a {
+
+    color: #ae62db;
+}
+
 /*==================DISCARD===============*/
-.piocheContainer{
+.showScoreButton{
+    display: none;
+    width: fit-content;
+    align-self: center;
+    background: grey;
+    outline: 0;
+    border: 0;
+    padding: 10px;
+    border-radius: 8px;
+}
+.piocheContainer {
     display: flex;
     flex-direction: column;
     gap: 10px;
     align-items: center;
 }
-.pioche{
+
+.restartButton {
+    cursor: pointer
+}
+
+.pioche {
     align-self: center;
     display: flex;
     flex-direction: row;
@@ -39,7 +174,7 @@ body{
     position: relative;
 }
 
-.pioche .stagingCard{
+.pioche .stagingCard {
     position: absolute;
     left: 50%;
     top: 50%;
@@ -47,20 +182,33 @@ body{
     transform: translate(-50%, -15%);
 
 }
+
 /*=============basic==============*/
-.plateau{
+.plateau {
     display: flex;
     flex-direction: row;
     justify-content: space-between;
 }
 
-.cardDeck{
+.cardDeck {
     display: flex;
     flex-direction: row;
     gap: 21px;
     position: relative;
+
+    justify-content: center;
+
 }
-.turn{
+
+.cardDeck .count {
+
+    position: absolute;
+    left: 0%;
+    top: -8%;
+    text-align: left;
+}
+
+.turn {
     position: absolute;
     top: -37px;
     left: 50%;
@@ -69,169 +217,198 @@ body{
     font-weight: 700;
     transform: translateX(-50%);
 }
-.columnCard{
+
+.columnCard {
     display: flex;
     flex-direction: column;
     gap: 10px;
 }
-/*===========ABOUT LITTLE CARD==========*/
-.littleCard{
 
+/*===========ABOUT LITTLE CARD==========*/
+.littleCard {
+    border-radius: 8px !important;
+    border: double 3px transparent !important;
     width: 69px !important;
     height: 107px !important;
 }
 
-.littleCard .topNumber,.littleCard .bottomNumber{
+.littleCard .topNumber, .littleCard .bottomNumber {
     font-size: 14px !important;
 }
-.littleCard .number{
+
+.littleCard .number {
 
     font-size: 55px !important;
 }
-.littleCard .behindCard span{
+
+.littleCard .behindCard span {
 
     font-size: 18px !important;
 }
-.noLittleCard{
+
+.noLittleCard {
     width: 118px !important;
     height: 174px !important;
 }
 
 /*===========ABOUT CARD==========*/
 
-.card{
+.card {
     display: flex;
     flex-direction: column;
     align-items: center;
     justify-content: center;
     width: 118px;
     height: 174px;
-    border: white 8px solid;
-    box-shadow: grey 0px 0px 12px 0px;
-    border-radius: 20px;
-    background: #ffffff;
+    border-radius: 5px;
     position: relative;
 
     cursor: pointer;
 
+    border: double 6px transparent;
+    background-clip: content-box, border-box;
+    background-origin: border-box;
     color: black;
-    font-weight: bold;
-    font-style: italic;
+    font-weight: 400;
+    font-style: normal;
 }
-.noCard{
-    background: transparent !important; ;
+
+.card:after {
+    content: "";
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 1px;
+    height: 1px;
+
+    border-radius: 50%;
+}
+
+.noCard {
+    background: transparent !important;;
     border: 0 !important;
     box-shadow: none !important;
-    display: none  ;
+    display: none;
 }
+
 .showNoCard {
     display: flex !important;
 }
 
-.untouchable{
+.untouchable {
     cursor: not-allowed !important;
 }
-.behindCard{
+
+.behindCard {
     position: absolute;
     width: 100%;
     height: 100%;
-    background: linear-gradient(163deg, #ffda18, #9ce58e82);
     z-index: 1;
-    border-radius: 15px;
+    border-radius: 10px;
+    background-color: #3E3E3E;
+    user-select: none;
 }
-.behindCard span{
+
+.behindCardBorder {
+    background-image: linear-gradient(to bottom, #3E3E3E, #3E3E3E 100%), linear-gradient(140deg, #8D2CF4, #F7C830, #DB386C, #1CE41C 100%) !important;
+
+}
+
+.behindCard .span1 {
     position: absolute;
-    top: 50%;
-    left: 50%;
+    bottom: 38%;
+    right: -48%;
     z-index: 1;
-    transform: translate(-50%, -50%);
+    rotate: 90deg;
     color: white;
     font-size: 31px;
-}
-.behindCard::after{
-    content: "";
-    position: absolute;
-    top: 0%;
-    left: 0%;
-    width: 100%;
-    height: 100%;
-
-    border-radius: 6px;
-
-    background: linear-gradient(45deg, #e3b4b4, #a124ff);
-}
-.yellow{
-    background: #ffff28;
-}
-.darkBlue{
-    background: #001c81;
-}
-.blue{
-    background: #a9d3fd;
-}
-.green{
-    background: #b5ff63;
-}
-.red{
-
-    background: #ff6363;
-}
-.darkBlue::after{
-    background: #ffffff73 !important;
-    box-shadow: 0px 0px 54px 44px hsl(0deg 0% 100% / 48%) !important;
-
-}
-.red::after{
-    background: #ffffffab !important;
-}
-.card::after{
-    content: "";
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    width: 41%;
-    height: 38%;
-    background: #ffffffb5;
-    border-radius: 50%;
-    backdrop-filter: blur(72px);
-    box-shadow: 0px 0px 54px 44px #ffffffb5;
-}
-.card .topNumber{
+    width: 133%;
     display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-
-    font-size: 26px;
-    position: absolute;
-    top: 5px;
-    left: 5px;
-    background: white;
-    width: 30%;
-    height: 16%;
-    border-radius: 60px 30px;
-    z-index: 1;
+    flex-direction: row;
+    justify-content: space-between;
 }
-.card .number{
+
+.behindCard .span2 {
+    position: absolute;
+    top: 38%;
+    left: -48%;
+    z-index: 1;
+    rotate: -90deg;
+    color: white;
+    font-size: 31px;
+    width: 133%;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+}
+
+.yellow {
+    background-image: linear-gradient(to bottom, #453B1B, #453B1B 100%), linear-gradient(to bottom, white, #d3d53a 100%);
+}
+
+.yellow::after {
+    box-shadow: 0px 0px 38px 36px rgb(179 177 98 / 64%);
+
+}
+
+.littleYellow:after {
+    box-shadow: 0px 0px 35px 21px rgb(179 177 98 / 64%);
+}
+
+.darkBlue {
+    background-image: linear-gradient(to bottom, #2F1A44, #2F1A44 100%), linear-gradient(to bottom, white, #8D2CF4 100%);
+}
+
+.darkBlue::after {
+    box-shadow: 0px 0px 35px 21px rgb(162 128 227 / 64%);
+}
+
+.littleDarkBlue:after {
+    box-shadow: 0px 0px 35px 21px rgb(162 128 227 / 64%);
+}
+
+.blue {
+    background-image: linear-gradient(to bottom, #1A3A44, #1A3A44 100%), linear-gradient(to bottom, white, #2CC2F4 100%);
+}
+
+.blue::after {
+    box-shadow: 0px 0px 38px 36px rgb(44 194 244 / 64%);
+}
+
+.littleBlue::after {
+    box-shadow: 0px 0px 35px 21px rgb(44 194 244 / 64%);
+}
+
+.green {
+    background-image: linear-gradient(to bottom, #174117, #174117 100%), linear-gradient(to bottom, white, #1CE41C 100%);
+
+}
+
+.green::after {
+    box-shadow: 0px 0px 38px 36px rgb(103 179 79 / 64%);
+}
+
+.green::after {
+    box-shadow: 0px 0px 35px 21px rgb(103 179 79 / 64%);
+}
+
+.red {
+    background-image: linear-gradient(to bottom, #3F1D28, #3F1D28 100%), linear-gradient(to bottom, white, #DB386C 100%);
+
+}
+
+.red::after {
+    box-shadow: 0px 0px 38px 36px rgb(255 100 100 / 64%);
+}
+
+.littleRed::after {
+    box-shadow: 0px 0px 35px 21px rgb(255 100 100 / 64%);
+}
+
+
+.card .number {
     font-size: 82px;
-
+    color: white;
     z-index: 1;
-}
-.card .bottomNumber{
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-
-    font-size: 26px;
-    position: absolute;
-    bottom: 5px;
-    right: 5px;
-    background: white;
-    width: 30%;
-    height: 16%;
-    border-radius: 60px 30px;
-
-    z-index: 1;
+    user-select: none;
 }

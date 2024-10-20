@@ -6,63 +6,70 @@
     <link rel="stylesheet" href="{{url_for('static',filename='style/style.css')}}">
 </head>
 <body>
-<div class="meta-turn"></div>
-<div class="meta-player-turn"></div>
-<div id="cursor-text" style="position:absolute; pointer-events:none; display:none;">
+<div class="menuContainer">
+    <h1>JOUER AU SKYJO</h1>
+    <a onclick="startGame()" class='card startCard behindCardBorder'>
+        <svg width="63" height="70" viewBox="0 0 63 70" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M56.9372 28.0658C62.2844 31.1423 62.2844 38.8577 56.9372 41.9342L13.9895 66.6438C8.65622 69.7123 2 65.8626 2 59.7096L2 10.2904C2 4.13736 8.65623 0.28769 13.9896 3.35618L56.9372 28.0658Z"
+                  stroke="white" style="stroke:white;stroke-opacity:1;" stroke-width="4"/>
+        </svg>
+        <span>PLAY</span>
+    </a>
 </div>
+<div class="scoresContainer">
+    <h1>End of game</h1>
+    <a onclick="closeScore()"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <path d="M6.4 19L5 17.6L10.6 12L5 6.4L6.4 5L12 10.6L17.6 5L19 6.4L13.4 12L19 17.6L17.6 19L12 13.4L6.4 19Z" fill="white" style="fill:white;fill-opacity:1;"/>
+    </svg>
+    </a>
+    <div class="scores">
 
-<div class="piocheContainer">
-    <span></span>
-    <span class="error"></span>
-    <a href="/restart">restart</a>
-    <div class="pioche">
-        <div class='card cardForPioche '>
-            <div class='behindCard'><span>SKYJO</span></div>
+    </div>
+</div>
+<div class="skyjoContainer">
+
+
+    <div class="skyjoTitle"><span>SKYJO</span> <a class="restartButton" onclick="startGame()">restart</a><a class="restartButton" onclick="showScore()">Scores</a></div>
+    <div class="meta-turn"></div>
+    <div class="meta-player-turn"></div>
+    <div id="cursor-text" style="position:absolute; pointer-events:none; display:none;">
+    </div>
+    <div id="cursor-text-2" style="position:absolute; pointer-events:none; display:none">
+    </div>
+    <button class="showScoreButton" onclick="showScore()">
+        Voir les score
+    </button>
+    <div class="piocheContainer">
+        <p class="consigne"></p>
+        <div class="pioche">
+            <div class='card cardForPioche behindCardBorder'>
+                <div class='behindCard'>
+                    <div class='span1'><span>o</span><span>SKYJO</span></div>
+                    <div class='span2'><span>o</span><span>SKYJO</span></div>
+                </div>
+            </div>
+
+            <div class="showedCard">
+                {{showed_card|safe}}
+            </div>
+            <div class="card noCard">
+
+            </div>
         </div>
 
-        <div class="showedCard">
-            {{showed_card|safe}}
-        </div>
-        <div class="card noCard">
-
-        </div>
+    </div>
+    <div class="plateau">
+        {{cards|safe}}
     </div>
 
 </div>
-<div class="plateau">
-    {{cards|safe}}
-</div>
-
 <script>
-
-    function setMouseText(player, message) {
-
-
-        document.addEventListener('mousemove', function (e) {
-            // Check the turn attribute
-
-            if (document.querySelector('.meta-turn').getAttribute('data-value') > 0) {
-                const hoveredElement = document.elementFromPoint(e.clientX, e.clientY);
-                const cursorText = document.querySelector('#cursor-text');
-                cursorText.innerHTML = message
-
-                if (hoveredElement && hoveredElement.closest(`#player${player}`)) {
-                    cursorText.style.left = e.pageX + 10 + 'px'; // Position slightly to the right of the cursor
-                    cursorText.style.top = e.pageY + 10 + 'px';  // Position slightly below the cursor
-                    cursorText.style.display = 'block'; // Show the text
-                } else {
-                    cursorText.style.display = 'none'; // Hide the text when not over #player0
-                }
-
-
-            }
-        });
+    function setText(message) {
+        document.querySelector('.consigne').textContent = message
     }
 
-    function removeMouseText() {
-        const cursorText = document.querySelector('#cursor-text');
-        cursorText.style.display = 'none'; // Hide the text when not over #player0
-
+    function removeText() {
+        document.querySelector('.consigne').textContent = ""
     }
 
 
@@ -92,7 +99,6 @@
                 if (document.querySelector('.stagingCard')) {
                     exchange(this.id, player_id)
                 } else {
-                    show.call(this);
                     return_card(this.id, player_id)
 
                 }
@@ -101,7 +107,15 @@
 
     }
 
-    updateBoard()
+    function showScore() {
+        document.querySelector('.skyjoContainer').style.display = 'none'
+        document.querySelector('.scoresContainer').style.display = 'flex'
+
+    } function closeScore() {
+        document.querySelector('.skyjoContainer').style.display = 'flex'
+        document.querySelector('.scoresContainer').style.display = 'none'
+
+    }
 
     async function updateBoard() {
 
@@ -113,26 +127,38 @@
         });
 
         const data = await response.json();
-        document.querySelector('.plateau').innerHTML = data.cards;
-        document.querySelector('.piocheContainer > span').innerText = "Discard : " + data.discard_cards_left + " cards left";
-        document.querySelector('.showedCard').innerHTML = data.showed_card;
-        const existingStagingCard = document.querySelector('.stagingCard')
-        if (data.staging_card) {
-            if (existingStagingCard) {
-                existingStagingCard.outerHTML = data.staging_card
-            } else {
+        document.querySelector('.piocheContainer').style.display = 'flex'
+        document.querySelector('.scoresContainer').style.display = 'none'
 
-                document.querySelector('.pioche').innerHTML += data.staging_card;
+        document.querySelector('.plateau').innerHTML = data.cards;
+        document.querySelector('.piocheContainer > p').textContent = "Discard : " + data.discard_cards_left + " cards left";
+        document.querySelector('.showedCard').innerHTML = data.showed_card;
+        const stagingCard = data.staging_card;
+        const cardStagingArea = document.querySelector('.stagingCard');
+
+        if (stagingCard) {
+            console.log('stagingCard exists in data');
+            if (cardStagingArea) {
+                cardStagingArea.outerHTML = stagingCard;
+            } else {
+                document.querySelector('.pioche').innerHTML += stagingCard;
             }
         } else {
-            if (existingStagingCard) {
-                existingStagingCard.remove()
+            console.log('stagingCard does not exist in data');
+            if (cardStagingArea) {
+                cardStagingArea.remove();
             }
         }
+
         document.querySelector('.meta-turn').setAttribute('data-value', data.turn_number);
         document.querySelector('.meta-player-turn').setAttribute('data-value', data.current_turn);
         console.log(data.turn_number)
-        if (data.turn_number <= 0 || document.querySelector('.stagingCard')) {
+
+        document.querySelectorAll('.cardDeck').forEach((deck) => {
+            deck.style.minWidth = 60 / data.player_number + '%'
+        })
+
+        if (data.turn_number <= 0 || document.querySelector('.stagingCard') || data.has_the_player_passed_staging_card) {
             document.querySelector(".pioche .cardForPioche").classList.add("untouchable")
         } else {
             document.querySelector(".pioche .cardForPioche").classList.remove("untouchable")
@@ -144,17 +170,66 @@
         } else {
             document.querySelector('.noCard').classList.remove('showNoCard')
         }
-        if (!document.querySelector('.stagingCard') && data.turn_number > 0) {
-            setMouseText(data.current_turn, "Discard card before return someone")
-        } else if (existingStagingCard) {
-            setMouseText(data.current_turn, "Choose card to change with staging card")
-          /*  setMouseText(-1, "Click here to pass this card and return your own card")
-*/
+        if (data.turn_number == 0) {
+            setText("Return your card")
+        } else if (data.has_the_player_passed_staging_card) {
+            setText("Return one card")
+        } else if (!document.querySelector('.stagingCard') && data.turn_number > 0) {
+            setText("Discard card before return someone")
+        } else if (stagingCard) {
+            setText("Choose you card to change with or passed and return your own card ")
         } else {
-            removeMouseText()
+            removeText()
         }
-        /* avoid adding many  click on same card */
-        add_onclick()
+
+            if (data.axes.end_of_game) {
+                document.querySelector('.scoresContainer h1').style.display = 'block'
+            }
+
+            //ADD SCORE
+            let content = "<div class=\"title\">"
+            for (let i = 0; i < data.player_number; i++) {
+                content += `<span>Joueur ${i}</span>`
+            }
+            content += "</div>"
+            document.querySelector('.scoresContainer .scores').innerHTML = content
+
+            let pointsHTML = ""
+            if (data.axes.points.length != 0){
+                for (let k = 0; k < data.axes.points[0].length; k++) {
+
+                    pointsHTML += `<div class=\"scoreLine ${data.axes.end_of_game ? "finaleScore":""}\">`
+                    data.axes.points.forEach((playerPoints) => {
+                        pointsHTML += `<span>${playerPoints[k]}</span>`
+                    })
+                    pointsHTML += "</div>"
+
+                }
+
+                if(data.axes.end_of_game){
+                   document.querySelector('.finalScore').style.background = "#373737"
+                }
+
+            }
+
+            document.querySelector('.scoresContainer .scores').innerHTML += pointsHTML
+            if (!data.axes.end_of_game) {
+                document.querySelector('.scoresContainer .scores').innerHTML += "<button onclick='startGame()'>Start Game</button>"
+            } else {
+                document.querySelector('.scoresContainer .scores').innerHTML += "<button onclick='newGame()'>Restart</button>"
+            }
+
+
+        if (!data.axes.end_of_axe) {
+            /* add if game is not finished*/
+
+            add_onclick()
+        }else{
+            document.querySelector('.piocheContainer').style.display = 'none'
+            document.querySelector('.showScoreButton').style.display = 'flex'
+
+        }
+
     }
 
     /*document.getElementById('play-turn-button').addEventListener('click', updateBoard);*/
@@ -177,6 +252,58 @@
                     alert(data.error)
                 } else {
                     console.log('Success:', data);
+                    updateBoard()
+                }
+
+            })
+            .catch((error) => {
+                console.error('Error:', error);
+                alert(error.message);
+            });
+    }
+
+    function startGame() {
+
+        fetch('/restart', {
+            method: 'GET',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+        })
+            .then(response => response.json())
+            .then(data => {
+                if (data.error) {
+                    alert(data.error)
+                } else {
+                    console.log('Snew_gameuccess:', data);
+                    document.querySelector('.menuContainer').style.display = 'none'
+                    document.querySelector('.skyjoContainer').style.display = 'flex'
+                    updateBoard()
+                }
+
+            })
+            .catch((error) => {
+                console.error('Error:', error);
+                alert(error.message);
+            });
+    }
+
+    function newGame() {
+
+        fetch('/newGame', {
+            method: 'GET',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+        })
+            .then(response => response.json())
+            .then(data => {
+                if (data.error) {
+                    alert(data.error)
+                } else {
+                    console.log('Success:', data);
+                    document.querySelector('.scoresContainer').style.display = 'none'
+                    document.querySelector('.skyjoContainer').style.display = 'flex'
                     updateBoard()
                 }
 
@@ -280,10 +407,6 @@
             });
     }
 
-    function show() {
-        this.querySelector(".behindCard").remove()
-        console.log(this)
-    }
 
 </script>
 </body>
