@@ -129,6 +129,7 @@
         const data = await response.json();
         document.querySelector('.piocheContainer').style.display = 'flex'
         document.querySelector('.scoresContainer').style.display = 'none'
+        document.querySelector('.showScoreButton').style.display = 'none'
 
         document.querySelector('.plateau').innerHTML = data.cards;
         document.querySelector('.piocheContainer > p').textContent = "Discard : " + data.discard_cards_left + " cards left";

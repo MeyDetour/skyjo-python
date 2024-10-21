@@ -71,7 +71,7 @@ body {
     background-image: linear-gradient(to bottom, #3E3E3E, #3E3E3E 100%), linear-gradient(222deg, #8D2CF4, #F7C830, #DB386C, #1CE41C 100%) !important;
     width: fit-content;
     min-width: 23%;
-    height: 50%;
+    height: fit-content;
     border: double 8px transparent;
     background-clip: content-box, border-box;
     background-origin: border-box;
