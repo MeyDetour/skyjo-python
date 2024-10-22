@@ -18,18 +18,21 @@
 </div>
 <div class="scoresContainer">
     <h1>End of game</h1>
-    <a onclick="closeScore()"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-        <path d="M6.4 19L5 17.6L10.6 12L5 6.4L6.4 5L12 10.6L17.6 5L19 6.4L13.4 12L19 17.6L17.6 19L12 13.4L6.4 19Z" fill="white" style="fill:white;fill-opacity:1;"/>
-    </svg>
+    <a onclick="closeScore()">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M6.4 19L5 17.6L10.6 12L5 6.4L6.4 5L12 10.6L17.6 5L19 6.4L13.4 12L19 17.6L17.6 19L12 13.4L6.4 19Z"
+                  fill="white" style="fill:white;fill-opacity:1;"/>
+        </svg>
     </a>
-    <div class="scores">
+    <div class="scoresBackground">
 
     </div>
 </div>
 <div class="skyjoContainer">
 
 
-    <div class="skyjoTitle"><span>SKYJO</span> <a class="restartButton" onclick="startGame()">restart</a><a class="restartButton" onclick="showScore()">Scores</a></div>
+    <div class="skyjoTitle"><span>SKYJO</span> <a class="restartButton" onclick="newGame()">Reset</a><a
+            class="restartButton" onclick="showScore()">Scores</a></div>
     <div class="meta-turn"></div>
     <div class="meta-player-turn"></div>
     <div id="cursor-text" style="position:absolute; pointer-events:none; display:none;">
@@ -99,8 +102,9 @@
                 if (document.querySelector('.stagingCard')) {
                     exchange(this.id, player_id)
                 } else {
-                    return_card(this.id, player_id)
-
+                    if (card.querySelector('.behindCard')) {
+                        return_card(this.id, player_id)
+                    }
                 }
             }
         }
@@ -111,8 +115,11 @@
         document.querySelector('.skyjoContainer').style.display = 'none'
         document.querySelector('.scoresContainer').style.display = 'flex'
 
-    } function closeScore() {
+    }
+
+    function closeScore() {
         document.querySelector('.skyjoContainer').style.display = 'flex'
+        document.querySelector('.scoresContainer').style.display = 'none'
         document.querySelector('.scoresContainer').style.display = 'none'
 
     }
@@ -127,113 +134,130 @@
         });
 
         const data = await response.json();
+
+        //reset affichage
         document.querySelector('.piocheContainer').style.display = 'flex'
         document.querySelector('.scoresContainer').style.display = 'none'
         document.querySelector('.showScoreButton').style.display = 'none'
+        document.querySelector('.meta-turn').setAttribute('data-value', data.turn_number);
+        document.querySelector('.meta-player-turn').setAttribute('data-value', data.current_turn);
 
+
+        //Complete affichage
         document.querySelector('.plateau').innerHTML = data.cards;
-        document.querySelector('.piocheContainer > p').textContent = "Discard : " + data.discard_cards_left + " cards left";
         document.querySelector('.showedCard').innerHTML = data.showed_card;
+
+        //add staging card
         const stagingCard = data.staging_card;
         const cardStagingArea = document.querySelector('.stagingCard');
-
         if (stagingCard) {
-            console.log('stagingCard exists in data');
             if (cardStagingArea) {
                 cardStagingArea.outerHTML = stagingCard;
             } else {
                 document.querySelector('.pioche').innerHTML += stagingCard;
             }
         } else {
-            console.log('stagingCard does not exist in data');
             if (cardStagingArea) {
                 cardStagingArea.remove();
             }
         }
 
-        document.querySelector('.meta-turn').setAttribute('data-value', data.turn_number);
-        document.querySelector('.meta-player-turn').setAttribute('data-value', data.current_turn);
-        console.log(data.turn_number)
-
+        //ajust size of deck
         document.querySelectorAll('.cardDeck').forEach((deck) => {
             deck.style.minWidth = 60 / data.player_number + '%'
         })
 
+        //adjust touchability of pioche
         if (data.turn_number <= 0 || document.querySelector('.stagingCard') || data.has_the_player_passed_staging_card) {
             document.querySelector(".pioche .cardForPioche").classList.add("untouchable")
         } else {
             document.querySelector(".pioche .cardForPioche").classList.remove("untouchable")
         }
-        const display_no_card = data.no_card
 
+        //if there is no discarded card, we replace it by an invisible card to keep rendering beautifull
+        const display_no_card = data.no_card
         if (display_no_card) {
             document.querySelector('.noCard').classList.add('showNoCard')
         } else {
             document.querySelector('.noCard').classList.remove('showNoCard')
         }
+
+        //explain what player have to do
         if (data.turn_number == 0) {
             setText("Return your card")
         } else if (data.has_the_player_passed_staging_card) {
             setText("Return one card")
         } else if (!document.querySelector('.stagingCard') && data.turn_number > 0) {
-            setText("Discard card before return someone")
+            setText("Discard a card before returning one")
         } else if (stagingCard) {
-            setText("Choose you card to change with or passed and return your own card ")
+            setText("Choose your card to exchange or pass and return your own card")
         } else {
             removeText()
         }
 
-            if (data.axes.end_of_game) {
-                document.querySelector('.scoresContainer h1').style.display = 'block'
-            }
 
-            //ADD SCORE
-            let content = "<div class=\"title\">"
-            for (let i = 0; i < data.player_number; i++) {
-                content += `<span>Joueur ${i}</span>`
-            }
-            content += "</div>"
-            document.querySelector('.scoresContainer .scores').innerHTML = content
+        //render title "end of game" if only game is finished not just axe
+        if (data.axes.end_of_game) {
+            document.querySelector('.scoresContainer h1').style.display = 'block'
+        }
 
-            let pointsHTML = ""
-            if (data.axes.points.length != 0){
-                for (let k = 0; k < data.axes.points[0].length; k++) {
+        //add titles with players
+        let content = "<div class=\"title\">"
+        for (let i = 0; i < data.player_number; i++) {
+            content += `<span>Joueur ${i}</span>`
+        }
+        content += "</div>"
+        document.querySelector('.scoresContainer .scoresBackground').innerHTML = content
 
-                    pointsHTML += `<div class=\"scoreLine ${data.axes.end_of_game ? "finaleScore":""}\">`
-                    data.axes.points.forEach((playerPoints) => {
-                        pointsHTML += `<span>${playerPoints[k]}</span>`
-                    })
-                    pointsHTML += "</div>"
+        //=============add scores
+        let pointsHTML = "<div class='scores'>"
+        if (data.axes.points.length != 0) {
 
-                }
-
-                if(data.axes.end_of_game){
-                   document.querySelector('.finalScore').style.background = "#373737"
-                }
-
-            }
-
-            document.querySelector('.scoresContainer .scores').innerHTML += pointsHTML
-            if (!data.axes.end_of_game) {
-                document.querySelector('.scoresContainer .scores').innerHTML += "<button onclick='startGame()'>Start Game</button>"
-            } else {
-                document.querySelector('.scoresContainer .scores').innerHTML += "<button onclick='newGame()'>Restart</button>"
+            //index of game
+            // ex : [ joueur 1 [score1,score2,score3], joueur 2 [score1,score2,score3]]
+            for (let k = 0; k < data.axes.points[0].length; k++) {
+                pointsHTML += `<div class=\"scoreLine \">`
+                //index of player for this game
+                data.axes.points.forEach((playerPoints) => {
+                    pointsHTML += `<span>${playerPoints[k] > 0 ? "+" : ""}${playerPoints[k]}</span>`
+                })
+                pointsHTML += "</div>"
             }
 
 
-        if (!data.axes.end_of_axe) {
+        }
+        document.querySelector('.scoresContainer .scoresBackground ').innerHTML += pointsHTML
+
+        //render sum of score
+        pointsHTML = `<div class=\"scoreLine finaleScore\">`
+        data.axes.points_sum.forEach((points) => {
+            pointsHTML += `<span>${points}</span>`
+        })
+        pointsHTML += "</div></div>"
+        document.querySelector('.scoresContainer .scoresBackground').innerHTML += pointsHTML
+
+
+        //=============end
+
+        //manage button
+        if (!data.axes.end_of_game) {
+            document.querySelector('.scoresContainer .scoresBackground').innerHTML += "<button onclick='startGame()'>Start Axe</button>"
+        } else {
+            document.querySelector('.scoresContainer .scoresBackground').innerHTML += "<button onclick='newGame()'>Start New Game</button>"
+        }
+
+
+        if (!data.axes.end_of_axe && !data.axes.end_of_game) {
             /* add if game is not finished*/
-
             add_onclick()
-        }else{
+        } else {
+            //if axe if finished
             document.querySelector('.piocheContainer').style.display = 'none'
             document.querySelector('.showScoreButton').style.display = 'flex'
 
         }
 
     }
-
-    /*document.getElementById('play-turn-button').addEventListener('click', updateBoard);*/
 
     function return_card(card_number, player) {
         let body = {

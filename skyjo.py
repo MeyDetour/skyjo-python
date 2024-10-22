@@ -13,6 +13,7 @@ class Game:
     def __init__(self, players_number):
         self.cards = []
         self.points = []
+        self.points_sum = []
         self.end_of_game = False
         self.end_of_axe = False
         self.players_number = players_number
@@ -95,6 +96,7 @@ class Game:
 
     def restart_points(self):
         self.points = []
+        self.points_sum = []
         self.end_of_game = False
     def restart(self):
 
@@ -204,14 +206,15 @@ class Game:
             print(f"Premier tour - Points initiaux : {self.points}")
         else:
             for idx, player_points in enumerate(points_value):  # Correction de la boucle pour enumerate
-                self.points[idx].append(player_points+self.points[idx][-1])
+                self.points[idx].append(player_points)
             print(f"Points actuels après ajout : {self.points}")
 
         # Calcul des totaux pour chaque joueur
-
+        self.points_sum = []
         print("\n--- Calcul des totaux ---")
         for idx, player_points in enumerate(self.points):
             total = sum(player_points)
+            self.points_sum.append(total)
             print(f"Total du joueur {idx} : {total}")
             if total >= 100:
                 print(f"Le joueur {idx} atteint ou dépasse 100 points. Fin de partie.")
@@ -253,52 +256,34 @@ class Game:
     def update_columns(self, player):
         columns_results = []
 
-        print("\n--- Mise à jour des colonnes du joueur {} ---".format(player))
         for idx, column in enumerate(self.players_cards[player]):
-            print(f"\nColonne {idx}: {column}")
             card_reference = column[0][0]
             result = True
-            print(f"  Référence de la première carte : {card_reference}")
 
             for card in column:
-                print(f"  Vérification carte : {card}")
                 if card[0] != card_reference or card[1] is False:
                     result = False
-                    print("  -> Résultat : faux (les cartes ne correspondent pas ou ne sont pas révélées)")
-                else:
-                    print("  -> Résultat : vrai (les cartes correspondent et sont révélées)")
 
             columns_results.append(result)
-
-        print(f"\nRésultat par colonne : {columns_results}")
-
         try:
             column = columns_results.index(True)
-            print(f"\nColonne avec cartes identiques : {column}")
 
             # Ajout des cartes montrées et défaussées
             if self.showed_card:
-                print(f"Ajout de la carte montrée {self.showed_card[0]} dans la pile de défausse")
                 self.game_discard.append(self.showed_card[0])
 
-            print(f"Ajout des cartes de la colonne {column} à la défausse")
             self.game_discard.append(self.players_cards[player][column][0][0])
             self.game_discard.append(self.players_cards[player][column][1][0])
 
             # Mise à jour de la carte montrée
             self.showed_card = self.players_cards[player][column][2]
             self.last_showed_card = self.showed_card
-            print(f"Nouvelle carte montrée : {self.showed_card}")
 
             # Suppression de la colonne
             del self.players_cards[player][column]
-            print(f"Colonne {column} supprimée des cartes du joueur {player}")
 
         except ValueError:
-            print("\nAucune colonne ne contient des cartes identiques entièrement révélées.")
             return
-
-        print("\n--- Fin de la mise à jour des colonnes ---\n")
 
     # def update_columns(self, player):
     #     columns_results = []
@@ -460,8 +445,8 @@ class Game:
                     self.update_columns(player)
 
                 self.update_score()
-                return True, self.players_cards, len(self.cards), self.play_turn, self.play_turn_number, self.points,self.end_of_game,self.end_of_axe
+                return True, self.players_cards,  self.play_turn, self.play_turn_number, self.points,self.end_of_game,self.end_of_axe,self.points_sum
 
 
         pprint.pprint(self.players_cards)
-        return False, self.players_cards, len(self.cards), self.play_turn, self.play_turn_number, self.points,self.end_of_game,self.end_of_axe
+        return False, self.players_cards, self.play_turn, self.play_turn_number, self.points,self.end_of_game,self.end_of_axe,self.points_sum

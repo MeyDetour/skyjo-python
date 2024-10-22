@@ -67,11 +67,13 @@ body {
     display: none
 }
 
-.scoresContainer .scores {
+.scoresContainer .scoresBackground {
     background-image: linear-gradient(to bottom, #3E3E3E, #3E3E3E 100%), linear-gradient(222deg, #8D2CF4, #F7C830, #DB386C, #1CE41C 100%) !important;
     width: fit-content;
     min-width: 23%;
     height: fit-content;
+
+    max-height: 90vh;
     border: double 8px transparent;
     background-clip: content-box, border-box;
     background-origin: border-box;
@@ -79,8 +81,33 @@ body {
     display: flex;
     flex-direction: column;
     position: relative;
+}.scoresContainer .scoresBackground .scores{
+    width: 100%;
+
+     height: 91%;
+    overflow-y: scroll;
+ }
+
+/* width */
+.scoresContainer .scoresBackground .scores::-webkit-scrollbar {
+    width: 10px;
 }
 
+/* Track */
+.scoresContainer .scoresBackground .scores::-webkit-scrollbar-track {
+    border-radius: 10px;
+}
+
+/* Handle */
+.scoresContainer .scoresBackground .scores::-webkit-scrollbar-thumb {
+    background: #373737;
+    border-radius: 10px;
+}
+
+/* Handle on hover */
+.scoresContainer .scoresBackground .scores::-webkit-scrollbar-thumb:hover {
+    background: #373737;
+}
 .scoresContainer .title {
 
     padding: 25px 80px;
@@ -108,6 +135,9 @@ body {
     width: fit-content;
     align-self: center;
     margin: 43px 19px;
+}
+.finaleScore{
+    background: #373737;
 }
 /*==============SKYJO CONTAINER========*/
 #SL_balloon_obj, #SL_shadow_translator {

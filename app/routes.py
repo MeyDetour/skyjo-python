@@ -37,7 +37,7 @@ def new_game():
 
 @app.route("/update_board", methods=['POST'])
 def update_board():
-    done, players_cards, discard_cards_left, turn, turn_number, points ,end_of_game,end_of_axe= game.run()
+    done, players_cards, turn, turn_number, points ,end_of_game,end_of_axe, points_sum= game.run()
     showed_card = game.get_showed_card()
     staging_card = game.get_staging_card()
     has_the_player_passed_staging_card = game.get_has_the_player_passed_staging_card()
@@ -86,7 +86,6 @@ def update_board():
         'done': done,
         'cards': plateau_cards,
         'player_number': constant.player_number,
-        'discard_cards_left': discard_cards_left,
         'showed_card': showed_card,
         'staging_card': staging_card,
         'current_turn': turn,
@@ -94,6 +93,7 @@ def update_board():
         'turn_number': turn_number,
         "axes": {
             "points": points,
+            "points_sum": points_sum,
             "end_of_game": end_of_game,
             "end_of_axe": end_of_axe,
         },
