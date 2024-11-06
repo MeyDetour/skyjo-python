@@ -180,49 +180,36 @@ class Game:
     def update_score(self):
         points_player_winner = self.count_showed_card_value(self.winner_player[0])
 
-        print(f"\n--- Mise à jour du score ---")
-        print(f"Points du gagnant actuel : {points_player_winner}")
-
         #get points of this axex
         points_value = []
         for player in range(0, player_number):
             points = self.count_showed_card_value(player)
             points_value.append(points)
-            print(f"Points du joueur {player} : {points}")
 
         #double points if someone has less
         max_points = min(points_value)
-        print(f"Max des points : {max_points}")
         if points_player_winner > max_points:
-            print(f"Doublage des points pour le joueur gagnant (Joueur {self.winner_player[0]})")
             points_value[self.winner_player[0]] *= 2
 
-        print(f"Points après éventuel doublage : {points_value}")
 
         # if first turn ? create list : append to existing list
         if len(self.points) != self.players_number:
             for point in points_value:
                 self.points.append([point])
-            print(f"Premier tour - Points initiaux : {self.points}")
         else:
             for idx, player_points in enumerate(points_value):  # Correction de la boucle pour enumerate
                 self.points[idx].append(player_points)
-            print(f"Points actuels après ajout : {self.points}")
 
         # Calcul des totaux pour chaque joueur
         self.points_sum = []
-        print("\n--- Calcul des totaux ---")
         for idx, player_points in enumerate(self.points):
             total = sum(player_points)
             self.points_sum.append(total)
-            print(f"Total du joueur {idx} : {total}")
             if total >= 100:
-                print(f"Le joueur {idx} atteint ou dépasse 100 points. Fin de partie.")
                 self.end_of_game = True
 
 
         self.end_of_axe = True
-        print("\n--- Fin de la mise à jour du score ---\n")
         return
 
     def count_showed_card_value(self, player):
@@ -230,27 +217,11 @@ class Game:
         count = 0
         border = "=" * 40
 
-        # Impression du titre
-        print(f"\n{border}\n|    Comptage des cartes visibles   |\n{border}")
-        print(f"Cartes du joueur {player} :")
-
         for column_index, column in enumerate(player_cards):
-            print(f"\n--- Colonne {column_index + 1} ---")  # Numérotation des colonnes pour clarté
-
             for card_index, card in enumerate(column):
-                # Vérifier que la carte est un tuple avec au moins deux éléments
-                print("card etudié :", card)
                 if isinstance(card, tuple) and len(card) == 2:
-                    if card[1]:  # Vérifie si la carte est visible (True)
+                    if card[1]:
                         count += card[0]
-                        print(f"✔️  Carte visible à l'index {card_index}: {card} -> Ajoutée, Valeur actuelle: {count}")
-                    else:
-                        print(f"❌  Carte cachée à l'index {card_index}: {card} -> Ignorée")
-                else:
-                    print(f"⚠️  Carte invalide à l'index {card_index} : {card}")
-
-        # Impression du total
-        print(f"\n{border}\n|  Valeur totale des cartes visibles du joueur {player} : {count}  |\n{border}\n")
         return count
 
     def update_columns(self, player):
