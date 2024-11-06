@@ -86,10 +86,10 @@ class Game:
 
             color += second_color
 
-        html = f"<div class=' card {addedClasses} {"behindCardBorder" if not showed else ""} {"untouchable" if player_number != self.play_turn or not touchable else ""} {"" if addedClasses == "discardedCard" or addedClasses == "stagingCard" else self.little_card_class} {color} ' id='{card_id}'> \
-                                    <span class='number'>{number}</span> \
-                                    {option}\
-                                 </div>"
+        html = f"<div class='card {addedClasses} {'behindCardBorder' if not showed else ''} {'untouchable' if player_number != self.play_turn or not touchable else ''} {'' if addedClasses == 'discardedCard' or addedClasses == 'stagingCard' else self.little_card_class} {color}' id='{card_id}'> \
+                    <span class='number'>{number}</span> \
+                    {option} \
+                 </div>"
 
         return html
 
