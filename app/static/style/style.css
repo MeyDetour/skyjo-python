@@ -452,10 +452,16 @@ body {
      padding : 20px
      }
      .card {
-    width: 79px;
-    height: 117px;
+    width: 80px;
+    height: 119px;
      }
      .behindCard .span2  , .behindCard .span1 { 
     font-size: 24px;
+     }
+     .cardDeck {
+         gap :7px;
+     }
+     .columnCard {
+         gap :7px
      }
  }
