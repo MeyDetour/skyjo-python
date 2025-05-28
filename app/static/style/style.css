@@ -449,7 +449,9 @@ body {
 
  @media only screen and (max-width:1300px){
      body {
-     padding : 20px
+    
+        padding: 10px;
+        margin: 0;
      }
      .card {
     width: 80px;
