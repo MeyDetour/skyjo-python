@@ -36,6 +36,7 @@ body {
 .skyjoContainer {
     display: none;
 
+    gap: 64px;
     height: 100%;
     flex-direction: column;
     justify-content: space-between;
@@ -443,3 +444,18 @@ body {
     z-index: 1;
     user-select: none;
 }
+
+
+
+ @media only screen and (max-width:110px){
+     body {
+     padding : 20px
+     }
+     .card {
+    width: 79px;
+    height: 117px;
+     }
+     .behindCard .span2  , .behindCard .span1 { 
+    font-size: 24px;
+     }
+ }
