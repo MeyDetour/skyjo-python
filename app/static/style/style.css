@@ -5,7 +5,7 @@ body {
     display: flex;
     flex-direction: column;
     justify-content: space-between;
-    height: 100vh;
+  
     width: 100vw;
     overflow-x: hidden;
     padding: 50px;
@@ -288,8 +288,9 @@ body {
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    width: 118px;
-    height: 174px;
+
+    width: 88px;
+    height: 139px;
     border-radius: 5px;
     position: relative;
 
@@ -437,7 +438,7 @@ body {
 
 
 .card .number {
-    font-size: 82px;
+       font-size: 69px;
     color: white;
     z-index: 1;
     user-select: none;
